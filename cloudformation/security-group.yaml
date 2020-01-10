@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security group setup for EC2 VPN instances
+Resources:
+  VPNSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: udp
+          FromPort: '51820'
+          ToPort: '51820'
+          CidrIp: '0.0.0.0/0'
