@@ -1,13 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
 var (
@@ -19,29 +21,36 @@ var (
 
 	// ErrNon200Response non 200 status code in response
 	ErrNon200Response = errors.New("Non 200 Response found")
+
+	config = aws.Config{}
 )
 
+type response struct {
+	Name      string `json:"name"`
+	Country   string `json:"country"`
+	IPAddress string `json:"ipAddress"`
+}
+
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	resp, err := http.Get(DefaultHTTPGetAddress)
+	json.Unmarshal([]byte(request.Body), response{})
+
+	sess, err := session.NewSession(&config)
+
 	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+		}, nil
 	}
 
-	if resp.StatusCode != 200 {
-		return events.APIGatewayProxyResponse{}, ErrNon200Response
-	}
+	svc := dynamodb.New(sess)
+	svd := 
 
-	ip, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
-
-	if len(ip) == 0 {
-		return events.APIGatewayProxyResponse{}, ErrNoIP
-	}
+	svc.PutItem(&dynamodb.PutItemInput{
+		Item: ,
+	})
 
 	return events.APIGatewayProxyResponse{
-		Body:       fmt.Sprintf("Hello, %v", string(ip)),
+		Body:       fmt.Sprintf("Hello, %v", string("")),
 		StatusCode: 200,
 	}, nil
 }
