@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/ecs"
 )
 
 var (
@@ -43,11 +44,17 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	svc := dynamodb.New(sess)
-	svd := 
+	svd := ecs.New(sess)
+
+	item := map[string]*dynamodb.AttributeValue{
+		"Id": &dynamodb.AttributeValue{S: response.Name},
+	}
 
 	svc.PutItem(&dynamodb.PutItemInput{
-		Item: ,
+		Item: item,
 	})
+
+	svd
 
 	return events.APIGatewayProxyResponse{
 		Body:       fmt.Sprintf("Hello, %v", string("")),
